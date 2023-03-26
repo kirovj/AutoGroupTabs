@@ -14,15 +14,21 @@ chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
 
 const colors = ["grey", "blue", "yellow", "red", "green", "pink", "purple", "cyan"]
 
+const suffix = ["com", "xyz", "net", "top", "tech", "org", "gov", "edu", "cn", "info", "club", "vip"]
+
 function genGroupName(url) {
     url = new URL(url);
     if (url.protocol != "http:" && url.protocol != "https:") {
         return url.protocol.substr(0, url.protocol.length - 1);
     }
+
     let hostName = url.hostname + "";
     let list = hostName.split(".");
-    // let groupName = hostName.startsWith("www.") ? hostName.substr(4) : hostName;
-    return list[1] + "." + list[2];
+    if (suffix.indexOf(list[2]) >= 0) {
+        return list[1] + "." + list[2];
+    }
+    let groupName = hostName.startsWith("www.") ? hostName.substr(4) : hostName;
+    return groupName;
 }
 
 let tabIdx = 0;
@@ -42,10 +48,10 @@ function groupAllTabs() {
         {
             currentWindow: true
         }, function (tabs) {
-        tabIdx = 0;
-        allTabs = tabs;
-        groupTab(allTabs[tabIdx], onGroupTabComplete);
-    });
+            tabIdx = 0;
+            allTabs = tabs;
+            groupTab(allTabs[tabIdx], onGroupTabComplete);
+        });
 }
 
 function groupTab(tab, complete) {
@@ -59,8 +65,8 @@ function groupTab(tab, complete) {
             {
                 windowId: currentWindow.id
             }, function (groups) {
-            groupTabIntl(tab, groups, currentWindow, complete);
-        })
+                groupTabIntl(tab, groups, currentWindow, complete);
+            })
     });
 }
 
@@ -77,16 +83,16 @@ function groupTabIntl(tab, groups, currentWindow, complete) {
                     },
                     tabIds: tab.id
                 }, function (groupId) {
-                console.debug("add group", groupName);
-                chrome.tabGroups.update(groupId,
-                    {
-                        color: colors[parseInt(Math.random() * 10)],
-                        title: groupName,
-                    }, function (group) {
-                    console.debug("group added", group.title);
-                    complete && complete();
-                });
-            })
+                    console.debug("add group", groupName);
+                    chrome.tabGroups.update(groupId,
+                        {
+                            color: colors[parseInt(Math.random() * 10)],
+                            title: groupName,
+                        }, function (group) {
+                            console.debug("group added", group.title);
+                            complete && complete();
+                        });
+                })
         }
         else {
             console.debug("update group", groupName);
@@ -95,9 +101,9 @@ function groupTabIntl(tab, groups, currentWindow, complete) {
                     groupId: existedGroup.id,
                     tabIds: tab.id
                 }, function (groupId) {
-                console.debug("group updated", groupName);
-                complete && complete();
-            })
+                    console.debug("group updated", groupName);
+                    complete && complete();
+                })
         }
     }
     catch (e) {
