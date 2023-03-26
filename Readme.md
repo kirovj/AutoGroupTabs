@@ -25,8 +25,6 @@
 
 ### 2023.03.27 改为一级域名
 
-初始版本
-
 ## 源码
 
  <https://github.com/kirovj/AutoGroupTabs>
