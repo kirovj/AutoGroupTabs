@@ -30,8 +30,13 @@ function genGroupName(url) {
         return "bbs";
     }
     let list = hostName.split(".");
-    if (suffix.indexOf(list[2]) >= 0) {
-        return list[1] + "." + list[2];
+    let first = list[1];
+    let next = list[2];
+    if (suffix.indexOf(next) >= 0) {
+        return first + "." + next;
+    }
+    if (!isNaN(parseFloat(next)) && isFinite(next)) {
+        return "others";
     }
     let groupName = hostName.startsWith("www.") ? hostName.substr(4) : hostName;
     return groupName;
