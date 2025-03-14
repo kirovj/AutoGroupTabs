@@ -23,6 +23,12 @@ function genGroupName(url) {
     }
 
     let hostName = url.hostname + "";
+    if (hostName.indexOf("zhihu") != -1
+        || hostName.indexOf("hupu") != -1
+        || hostName.indexOf("nga") != -1
+        || hostName.indexOf("v2ex") != -1) {
+        return "bbs";
+    }
     let list = hostName.split(".");
     if (suffix.indexOf(list[2]) >= 0) {
         return list[1] + "." + list[2];
